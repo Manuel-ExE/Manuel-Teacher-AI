@@ -2,28 +2,42 @@
 <resources>
     <string name="app_name">ManuelTAi</string>
     <string name="app_tagline">Offline teaching workspace</string>
-    <string name="ai_status_label">PROTOTYPE MODE · LOCAL STORAGE</string>
-    <string name="ai_status_ready">Teacher workspace ready. AI engine is not installed yet.</string>
-    <string name="workspace_title">Teacher workspace</string>
-    <string name="lesson_planner">Lesson Planner</string>
-    <string name="question_generator">Question Generator</string>
-    <string name="teaching_materials">Teaching Materials</string>
-    <string name="settings_battery_on">Settings · Battery saver ON</string>
-    <string name="settings_battery_off">Settings · Battery saver OFF</string>
     <string name="saved_resources">Saved resources: %1$d</string>
     <string name="material_imported">Imported locally: %1$s</string>
-    <string name="material_saved">Material reference saved on this device</string>
-    <string name="lesson_planner_title">Create lesson plan</string>
-    <string name="question_generator_title">Create question set</string>
-    <string name="generate_save">Generate and save</string>
-    <string name="subject_hint">Subject</string>
-    <string name="class_hint">Class or level</string>
-    <string name="topic_hint">Topic</string>
-    <string name="duration_hint">Duration</string>
-    <string name="question_count_hint">Number of questions</string>
-    <string name="lesson_saved">Lesson saved locally: %1$s</string>
-    <string name="questions_saved">Questions saved locally: %1$s</string>
-    <string name="settings_saved">Setting saved on this device</string>
-    <string name="battery_mode_on">Battery saver is ON. Generation runs only after you request it.</string>
-    <string name="battery_mode_off">Battery saver is OFF. No background process is running.</string>
+    <string name="material_saved">Material saved on this device</string>
+    <string name="settings_summary">Battery saver is active. AI runs only when requested and stays on this device.</string>
+
+    <!-- Model management -->
+    <string name="import_model">Import AI model (.task)</string>
+    <string name="model_not_loaded">No local AI model loaded yet. Tap \"Import AI model\" and select a .task model file (e.g. Gemma 3 1B) you\'ve downloaded.</string>
+    <string name="model_ready">Local model ready (%1$d MB). Runs fully offline.</string>
+    <string name="model_loading">Loading local model…</string>
+    <string name="model_load_failed">Could not load the model file: %1$s</string>
+    <string name="model_import_failed">Could not import the model file: %1$s</string>
+    <string name="model_importing">Importing model file…</string>
+
+    <!-- Lesson Planner -->
+    <string name="lesson_planner_title">Lesson Planner</string>
+    <string name="label_subject">Subject</string>
+    <string name="label_class">Class</string>
+    <string name="label_topic">Topic</string>
+    <string name="label_duration">Duration (minutes)</string>
+    <string name="label_curriculum">Curriculum</string>
+    <string name="label_difficulty">Difficulty</string>
+    <string name="hint_topic">e.g. Photosynthesis</string>
+    <string name="hint_duration">e.g. 40</string>
+    <string name="generate">Generate</string>
+    <string name="save">Save</string>
+    <string name="share">Share</string>
+    <string name="lesson_saved">Lesson saved on this device</string>
+    <string name="topic_required">Enter a topic first</string>
+    <string name="generation_failed">Generation failed: %1$s</string>
+
+    <!-- Question Generator -->
+    <string name="question_generator_title">Question Generator</string>
+    <string name="label_question_count">Number of questions</string>
+    <string name="hint_question_count">e.g. 10</string>
+    <string name="label_question_type">Question type</string>
+    <string name="include_answers">Include answers</string>
+    <string name="include_explanations">Include explanations</string>
 </resources>

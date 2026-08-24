@@ -11,27 +11,12 @@ android {
         applicationId "com.manuel.tai"
         minSdk 24
         targetSdk 34
-        versionCode 2
-        versionName "0.2.0"
-    }
-
-    signingConfigs {
-        ci {
-            def ciStoreFile = project.findProperty('ciStoreFile')
-            if (ciStoreFile) {
-                storeFile file(ciStoreFile)
-                storePassword project.findProperty('ciStorePassword')
-                keyAlias project.findProperty('ciKeyAlias')
-                keyPassword project.findProperty('ciKeyPassword')
-            }
-        }
+        versionCode 1
+        versionName "0.1.0"
     }
 
     buildTypes {
         release {
-            // CI supplies an ephemeral test keystore. Production must use protected secrets.
-            def ciStoreFile = project.findProperty('ciStoreFile')
-            if (ciStoreFile) signingConfig signingConfigs.ci
             minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -57,5 +42,14 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.11.0'
     implementation 'androidx.activity:activity-ktx:1.8.2'
-    testImplementation 'junit:junit:4.13.2'
+    implementation 'androidx.recyclerview:recyclerview:1.3.2'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.7.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
+
+    // Local, on-device Gemma inference (no network required at runtime).
+    // Model files (.task) are NOT bundled in the APK — they're multi-GB and
+    // gated behind a license on Kaggle/Hugging Face. The teacher imports one
+    // via the in-app file picker (see ModelManager.kt).
+    implementation 'com.google.mediapipe:tasks-genai:0.10.14'
 }

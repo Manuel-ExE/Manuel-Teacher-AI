@@ -3,148 +3,102 @@ package com.manuel.tai
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import androidx.lifecycle.lifecycleScope
+import com.manuel.tai.ai.ModelManager
 import com.manuel.tai.databinding.ActivityMainBinding
-import org.json.JSONArray
-import org.json.JSONObject
+import com.manuel.tai.ui.LessonPlannerActivity
+import com.manuel.tai.ui.QuestionGeneratorActivity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private val preferences by lazy { getSharedPreferences(PREFERENCES, Activity.MODE_PRIVATE) }
+    private var savedResources = 0
 
-    private val materialPicker = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-        uri ?: return@registerForActivityResult
-        try {
-            contentResolver.takePersistableUriPermission(
-                uri,
-                Intent.FLAG_GRANT_READ_URI_PERMISSION
-            )
-        } catch (_: SecurityException) {
-            // Some document providers grant temporary access only; the URI is still recorded.
+    private val materialPicker = registerForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { uri ->
+        if (uri != null) {
+            savedResources += 1
+            getPreferences(Activity.MODE_PRIVATE).edit().putInt("resource_count", savedResources).apply()
+            binding.resourceCountText.text = getString(R.string.saved_resources, savedResources)
+            binding.statusText.text = getString(R.string.material_imported, uri.lastPathSegment ?: "document")
+            Toast.makeText(this, R.string.material_saved, Toast.LENGTH_SHORT).show()
         }
-        saveItem("material", uri.lastPathSegment ?: "Teaching material", uri.toString())
-        binding.statusText.text = getString(R.string.material_imported, uri.lastPathSegment ?: "document")
-        Toast.makeText(this, R.string.material_saved, Toast.LENGTH_SHORT).show()
+    }
+
+    private val modelPicker = registerForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { uri ->
+        if (uri != null) importModel(uri)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        refreshResourceCount()
-        refreshSettingsStatus()
 
-        binding.lessonButton.setOnClickListener { showLessonPlanner() }
-        binding.questionButton.setOnClickListener { showQuestionGenerator() }
-        binding.materialButton.setOnClickListener { materialPicker.launch(arrayOf("application/pdf")) }
-        binding.settingsButton.setOnClickListener { showSettings() }
-    }
+        savedResources = getPreferences(Activity.MODE_PRIVATE).getInt("resource_count", 0)
+        binding.resourceCountText.text = getString(R.string.saved_resources, savedResources)
 
-    private fun showLessonPlanner() {
-        val form = formContainer()
-        val subject = field(getString(R.string.subject_hint))
-        val classLevel = field(getString(R.string.class_hint))
-        val topic = field(getString(R.string.topic_hint))
-        val duration = field(getString(R.string.duration_hint))
-        form.addViews(subject, classLevel, topic, duration)
-
-        MaterialAlertDialogBuilder(this)
-            .setTitle(R.string.lesson_planner_title)
-            .setView(form)
-            .setNegativeButton(android.R.string.cancel, null)
-            .setPositiveButton(R.string.generate_save) { _, _ ->
-                val subjectText = subject.text.toString().trim().ifBlank { "General Studies" }
-                val classText = classLevel.text.toString().trim().ifBlank { "Class" }
-                val topicText = topic.text.toString().trim().ifBlank { "Today’s topic" }
-                val durationText = duration.text.toString().trim().ifBlank { "40 minutes" }
-                val draft = DraftGenerator.lesson(subjectText, classText, topicText, durationText)
-                saveItem("lesson", "$subjectText: $topicText", draft)
-                binding.statusText.text = getString(R.string.lesson_saved, topicText)
-            }
-            .show()
-    }
-
-    private fun showQuestionGenerator() {
-        val form = formContainer()
-        val subject = field(getString(R.string.subject_hint))
-        val topic = field(getString(R.string.topic_hint))
-        val count = field(getString(R.string.question_count_hint))
-        form.addViews(subject, topic, count)
-
-        MaterialAlertDialogBuilder(this)
-            .setTitle(R.string.question_generator_title)
-            .setView(form)
-            .setNegativeButton(android.R.string.cancel, null)
-            .setPositiveButton(R.string.generate_save) { _, _ ->
-                val subjectText = subject.text.toString().trim().ifBlank { "General Studies" }
-                val topicText = topic.text.toString().trim().ifBlank { "Today’s topic" }
-                val countText = count.text.toString().trim().ifBlank { "5" }
-                val draft = DraftGenerator.questions(subjectText, topicText, countText)
-                saveItem("questions", "$subjectText: $topicText", draft)
-                binding.statusText.text = getString(R.string.questions_saved, topicText)
-            }
-            .show()
-    }
-
-    private fun showSettings() {
-        val batterySaver = !preferences.getBoolean(KEY_BATTERY_SAVER, true)
-        preferences.edit().putBoolean(KEY_BATTERY_SAVER, batterySaver).apply()
-        refreshSettingsStatus()
-        Toast.makeText(this, R.string.settings_saved, Toast.LENGTH_SHORT).show()
-    }
-
-    private fun refreshSettingsStatus() {
-        val enabled = preferences.getBoolean(KEY_BATTERY_SAVER, true)
-        binding.settingsButton.text = if (enabled) getString(R.string.settings_battery_on) else getString(R.string.settings_battery_off)
-        binding.statusText.text = if (enabled) getString(R.string.battery_mode_on) else getString(R.string.battery_mode_off)
-    }
-
-    private fun saveItem(type: String, title: String, content: String) {
-        val items = try {
-            JSONArray(preferences.getString(KEY_ITEMS, "[]"))
-        } catch (_: Exception) {
-            JSONArray()
+        binding.lessonButton.setOnClickListener {
+            startActivity(Intent(this, LessonPlannerActivity::class.java))
         }
-        items.put(JSONObject().apply {
-            put("type", type)
-            put("title", title)
-            put("content", content)
-            put("createdAt", System.currentTimeMillis())
-        })
-        preferences.edit().putString(KEY_ITEMS, items.toString()).apply()
-        refreshResourceCount()
+
+        binding.questionButton.setOnClickListener {
+            startActivity(Intent(this, QuestionGeneratorActivity::class.java))
+        }
+
+        binding.materialButton.setOnClickListener {
+            materialPicker.launch("application/pdf")
+        }
+
+        binding.settingsButton.setOnClickListener {
+            binding.statusText.text = getString(R.string.settings_summary)
+        }
+
+        binding.importModelButton.setOnClickListener {
+            // .task model files usually have no registered MIME type, so we
+            // accept any file and let the copy step fail gracefully if it's
+            // not a real model file.
+            modelPicker.launch("*/*")
+        }
+
+        refreshModelStatus()
     }
 
-    private fun refreshResourceCount() {
-        val count = try { JSONArray(preferences.getString(KEY_ITEMS, "[]")).length() } catch (_: Exception) { 0 }
-        binding.resourceCountText.text = getString(R.string.saved_resources, count)
+    override fun onResume() {
+        super.onResume()
+        refreshModelStatus()
     }
 
-    private fun formContainer() = LinearLayout(this).apply {
-        orientation = LinearLayout.VERTICAL
-        setPadding(48, 8, 48, 0)
+    private fun refreshModelStatus() {
+        binding.modelStatusText.text = if (ModelManager.isModelInstalled(this)) {
+            getString(R.string.model_ready, ModelManager.modelSizeMb(this))
+        } else {
+            getString(R.string.model_not_loaded)
+        }
     }
 
-    private fun field(hint: String) = EditText(this).apply {
-        this.hint = hint
-        setSingleLine(true)
-        layoutParams = LinearLayout.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-    }
+    private fun importModel(uri: android.net.Uri) {
+        binding.modelStatusText.text = getString(R.string.model_importing)
+        binding.importModelButton.isEnabled = false
 
-    private fun LinearLayout.addViews(vararg views: EditText) = views.forEach { addView(it) }
-
-    companion object {
-        private const val PREFERENCES = "manuel_tai"
-        private const val KEY_ITEMS = "saved_items"
-        private const val KEY_BATTERY_SAVER = "battery_saver"
+        lifecycleScope.launch {
+            val result = withContext(Dispatchers.IO) {
+                ModelManager.importModel(this@MainActivity, uri)
+            }
+            binding.importModelButton.isEnabled = true
+            result.onSuccess {
+                refreshModelStatus()
+                Toast.makeText(this@MainActivity, "Model imported", Toast.LENGTH_SHORT).show()
+            }.onFailure { e ->
+                binding.modelStatusText.text = getString(R.string.model_import_failed, e.message ?: e.toString())
+            }
+        }
     }
 }
