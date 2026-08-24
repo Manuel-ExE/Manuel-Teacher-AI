@@ -5,17 +5,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?attr/android:colorBackground"
     android:orientation="vertical">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@android:color/white"
-        android:elevation="2dp"
+        android:elevation="0dp"
         android:title="@string/lesson_planner_title"
-        app:navigationIcon="@drawable/ic_back"
-        app:titleTextColor="#17223B" />
+        app:navigationIcon="@drawable/ic_back" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -34,7 +33,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:padding="10dp"
+                android:background="@drawable/bg_status_pill"
+                android:padding="12dp"
+                android:textColor="@color/text_secondary"
                 android:textSize="13sp"
                 tools:text="Local model not loaded. Import one from the main screen." />
 
@@ -50,24 +51,32 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-            <TextView style="@style/FieldLabel" android:text="@string/label_topic" />
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/topicInput"
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:drawable/edit_text"
-                android:hint="@string/hint_topic"
-                android:padding="12dp" />
+                android:layout_marginTop="14dp"
+                android:hint="@string/label_topic"
+                app:placeholderText="@string/hint_topic">
 
-            <TextView style="@style/FieldLabel" android:text="@string/label_duration" />
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/durationInput"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/topicInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:drawable/edit_text"
-                android:hint="@string/hint_duration"
-                android:inputType="number"
-                android:padding="12dp" />
+                android:layout_marginTop="14dp"
+                android:hint="@string/label_duration"
+                app:placeholderText="@string/hint_duration">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/durationInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number" />
+            </com.google.android.material.textfield.TextInputLayout>
 
             <TextView style="@style/FieldLabel" android:text="@string/label_curriculum" />
             <Spinner
@@ -102,8 +111,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:visibility="gone"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="1dp">
+                app:cardCornerRadius="16dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -115,6 +123,7 @@
                         android:id="@+id/resultText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:textColor="@color/text_primary"
                         android:textIsSelectable="true"
                         android:textSize="14sp"
                         tools:text="Generated lesson plan appears here." />
@@ -141,6 +150,14 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/share" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/exportButton"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/export_pdf" />
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

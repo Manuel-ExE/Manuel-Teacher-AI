@@ -1,5 +1,6 @@
 package com.manuel.tai.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
@@ -7,17 +8,22 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.manuel.tai.DraftGenerator
 import com.manuel.tai.R
 import com.manuel.tai.ai.LocalAiEngine
 import com.manuel.tai.ai.ModelManager
 import com.manuel.tai.databinding.ActivityQuestionGeneratorBinding
+import com.manuel.tai.export.PdfExporter
+import androidx.core.content.FileProvider
 import com.manuel.tai.model.QuestionParser
+import java.io.File
 import kotlinx.coroutines.launch
 
 class QuestionGeneratorActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityQuestionGeneratorBinding
     private lateinit var adapter: QuestionAdapter
+    private var lastOutput = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +36,8 @@ class QuestionGeneratorActivity : AppCompatActivity() {
         refreshModelStatus()
 
         binding.generateButton.setOnClickListener { onGenerateClicked() }
+        binding.saveQuestionsButton.setOnClickListener { saveQuestions() }
+        binding.exportQuestionsButton.setOnClickListener { exportQuestions() }
     }
 
     override fun onResume() {
@@ -63,7 +71,6 @@ class QuestionGeneratorActivity : AppCompatActivity() {
 
     private fun refreshModelStatus() {
         val installed = ModelManager.isModelInstalled(this)
-        binding.generateButton.isEnabled = installed
         binding.modelStatusText.text = if (installed) {
             getString(R.string.model_ready, ModelManager.modelSizeMb(this))
         } else {
@@ -78,10 +85,16 @@ class QuestionGeneratorActivity : AppCompatActivity() {
             return
         }
 
-        val prompt = buildPrompt(topic)
-        setLoading(true)
         binding.rawFallbackText.visibility = View.GONE
         adapter.submitList(emptyList())
+
+        if (!ModelManager.isModelInstalled(this)) {
+            generateOfflineDraft(topic)
+            return
+        }
+
+        val prompt = buildPrompt(topic)
+        setLoading(true)
 
         lifecycleScope.launch {
             try {
@@ -90,6 +103,7 @@ class QuestionGeneratorActivity : AppCompatActivity() {
                     LocalAiEngine.initialize(this@QuestionGeneratorActivity, modelPath).getOrThrow()
                 }
                 val response = LocalAiEngine.generateResponse(prompt)
+                lastOutput = response
                 val questions = QuestionParser.parse(response)
                 if (questions.isEmpty()) {
                     binding.rawFallbackText.text = response
@@ -107,6 +121,19 @@ class QuestionGeneratorActivity : AppCompatActivity() {
                 setLoading(false)
             }
         }
+    }
+
+    private fun generateOfflineDraft(topic: String) {
+        val subject = binding.subjectSpinner.selectedItem?.toString().orEmpty()
+        val count = binding.countInput.text?.toString()?.trim()?.toIntOrNull() ?: 10
+
+        val draft = DraftGenerator.questions(subject, topic, count.toString())
+        lastOutput = draft
+        // The template output doesn't follow the "Q1:" format QuestionParser
+        // expects, so show it as raw text rather than trying to parse it.
+        binding.rawFallbackText.text = draft
+        binding.rawFallbackText.visibility = View.VISIBLE
+        Toast.makeText(this, R.string.basic_draft_notice, Toast.LENGTH_LONG).show()
     }
 
     private fun buildPrompt(topic: String): String {
@@ -143,8 +170,25 @@ class QuestionGeneratorActivity : AppCompatActivity() {
         """.trimIndent()
     }
 
+    private fun saveQuestions() {
+        if (lastOutput.isBlank()) return
+        File(File(filesDir, "questions").apply { mkdirs() }, "questions_${System.currentTimeMillis()}.txt").writeText(lastOutput)
+        Toast.makeText(this, R.string.result_saved, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun exportQuestions() {
+        if (lastOutput.isBlank()) return
+        val file = PdfExporter.write(this, "questions_${System.currentTimeMillis()}", lastOutput)
+        val uri = FileProvider.getUriForFile(this, "$packageName.fileprovider", file)
+        startActivity(Intent.createChooser(Intent(Intent.ACTION_SEND).apply {
+            type = "application/pdf"
+            putExtra(Intent.EXTRA_STREAM, uri)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }, getString(R.string.export_pdf)))
+    }
+
     private fun setLoading(loading: Boolean) {
         binding.progressBar.visibility = if (loading) View.VISIBLE else View.GONE
-        binding.generateButton.isEnabled = !loading && ModelManager.isModelInstalled(this)
+        binding.generateButton.isEnabled = !loading
     }
 }

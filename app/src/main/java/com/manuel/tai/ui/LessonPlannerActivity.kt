@@ -7,10 +7,14 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.manuel.tai.DraftGenerator
 import com.manuel.tai.R
 import com.manuel.tai.ai.LocalAiEngine
 import com.manuel.tai.ai.ModelManager
 import com.manuel.tai.databinding.ActivityLessonPlannerBinding
+import com.manuel.tai.export.PdfExporter
+import com.manuel.tai.data.LocalStore
+import androidx.core.content.FileProvider
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -31,6 +35,7 @@ class LessonPlannerActivity : AppCompatActivity() {
         binding.generateButton.setOnClickListener { onGenerateClicked() }
         binding.saveButton.setOnClickListener { saveLesson() }
         binding.shareButton.setOnClickListener { shareLesson() }
+        binding.exportButton.setOnClickListener { exportLesson() }
     }
 
     override fun onResume() {
@@ -58,7 +63,6 @@ class LessonPlannerActivity : AppCompatActivity() {
 
     private fun refreshModelStatus() {
         val installed = ModelManager.isModelInstalled(this)
-        binding.generateButton.isEnabled = installed
         binding.modelStatusText.text = if (installed) {
             getString(R.string.model_ready, ModelManager.modelSizeMb(this))
         } else {
@@ -70,6 +74,11 @@ class LessonPlannerActivity : AppCompatActivity() {
         val topic = binding.topicInput.text?.toString()?.trim().orEmpty()
         if (topic.isEmpty()) {
             Toast.makeText(this, R.string.topic_required, Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (!ModelManager.isModelInstalled(this)) {
+            generateOfflineDraft(topic)
             return
         }
 
@@ -98,12 +107,26 @@ class LessonPlannerActivity : AppCompatActivity() {
         }
     }
 
+    private fun generateOfflineDraft(topic: String) {
+        val subject = binding.subjectSpinner.selectedItem?.toString().orEmpty()
+        val classLevel = binding.classSpinner.selectedItem?.toString().orEmpty()
+        val duration = binding.durationInput.text?.toString()?.trim().takeUnless { it.isNullOrEmpty() } ?: "40"
+
+        val localContext = LocalStore.retrieve(this, topic).joinToString("\n")
+        val draft = DraftGenerator.lesson(subject, classLevel, topic, "$duration minutes") + if (localContext.isBlank()) "" else "\n\nLocal material context:\n$localContext"
+        lastResult = draft
+        binding.resultText.text = draft
+        binding.resultCard.visibility = View.VISIBLE
+        Toast.makeText(this, R.string.basic_draft_notice, Toast.LENGTH_LONG).show()
+    }
+
     private fun buildPrompt(topic: String): String {
         val subject = binding.subjectSpinner.selectedItem?.toString().orEmpty()
         val classLevel = binding.classSpinner.selectedItem?.toString().orEmpty()
         val duration = binding.durationInput.text?.toString()?.trim().takeUnless { it.isNullOrEmpty() } ?: "40"
         val curriculum = binding.curriculumSpinner.selectedItem?.toString().orEmpty()
         val difficulty = binding.difficultySpinner.selectedItem?.toString().orEmpty()
+        val localContext = LocalStore.retrieve(this, topic).joinToString("\n")
 
         return """
             You are helping a teacher plan a lesson. Write a complete, classroom-ready lesson plan.
@@ -114,6 +137,8 @@ class LessonPlannerActivity : AppCompatActivity() {
             Duration: $duration minutes
             Curriculum: $curriculum
             Difficulty: $difficulty
+            Local teaching-material excerpts:
+            $localContext
 
             Structure the lesson plan with these sections, each clearly labeled:
             Learning Objectives
@@ -128,7 +153,7 @@ class LessonPlannerActivity : AppCompatActivity() {
 
     private fun setLoading(loading: Boolean) {
         binding.progressBar.visibility = if (loading) View.VISIBLE else View.GONE
-        binding.generateButton.isEnabled = !loading && ModelManager.isModelInstalled(this)
+        binding.generateButton.isEnabled = !loading
     }
 
     private fun saveLesson() {
@@ -139,6 +164,17 @@ class LessonPlannerActivity : AppCompatActivity() {
         val file = File(dir, "${safeName}_${System.currentTimeMillis()}.txt")
         file.writeText(text)
         Toast.makeText(this, R.string.lesson_saved, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun exportLesson() {
+        val text = lastResult ?: return
+        val file = PdfExporter.write(this, "lesson_${System.currentTimeMillis()}", text)
+        val uri = FileProvider.getUriForFile(this, "$packageName.fileprovider", file)
+        startActivity(Intent.createChooser(Intent(Intent.ACTION_SEND).apply {
+            type = "application/pdf"
+            putExtra(Intent.EXTRA_STREAM, uri)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }, getString(R.string.export_pdf)))
     }
 
     private fun shareLesson() {

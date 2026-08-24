@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand (lightened for contrast on dark surfaces) -->
+    <color name="brand_primary">#7DA1F0</color>
+    <color name="brand_primary_soft">#1E2A46</color>
+    <color name="on_brand_primary">#0B1220</color>
+
+    <!-- Surfaces -->
+    <color name="app_background">#101317</color>
+    <color name="surface">#1A1D22</color>
+    <color name="surface_alt">#20242B</color>
+    <color name="stroke">#2A2F37</color>
+
+    <!-- Text -->
+    <color name="text_primary">#EEF1F6</color>
+    <color name="text_secondary">#9AA3B2</color>
+
+    <!-- Status -->
+    <color name="status_ready">#3DD68C</color>
+    <color name="status_ready_soft">#123326</color>
+    <color name="status_template">#E3A548</color>
+    <color name="status_template_soft">#3A2C14</color>
+</resources>

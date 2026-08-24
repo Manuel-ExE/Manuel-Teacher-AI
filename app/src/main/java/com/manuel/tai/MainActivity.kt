@@ -6,11 +6,18 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.lifecycle.lifecycleScope
 import com.manuel.tai.ai.ModelManager
+import com.manuel.tai.data.LocalStore
 import com.manuel.tai.databinding.ActivityMainBinding
 import com.manuel.tai.ui.LessonPlannerActivity
+import com.manuel.tai.ui.MaterialsActivity
 import com.manuel.tai.ui.QuestionGeneratorActivity
+import com.manuel.tai.ui.SettingsActivity
+import com.manuel.tai.ui.StudentRecordsActivity
+import com.manuel.tai.ui.WorkspaceToolActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -18,18 +25,6 @@ import kotlinx.coroutines.withContext
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var savedResources = 0
-
-    private val materialPicker = registerForActivityResult(
-        ActivityResultContracts.GetContent()
-    ) { uri ->
-        if (uri != null) {
-            savedResources += 1
-            getPreferences(Activity.MODE_PRIVATE).edit().putInt("resource_count", savedResources).apply()
-            binding.resourceCountText.text = getString(R.string.saved_resources, savedResources)
-            binding.statusText.text = getString(R.string.material_imported, uri.lastPathSegment ?: "document")
-            Toast.makeText(this, R.string.material_saved, Toast.LENGTH_SHORT).show()
-        }
-    }
 
     private val modelPicker = registerForActivityResult(
         ActivityResultContracts.GetContent()
@@ -42,7 +37,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        savedResources = getPreferences(Activity.MODE_PRIVATE).getInt("resource_count", 0)
+        savedResources = LocalStore.materials(this).size
         binding.resourceCountText.text = getString(R.string.saved_resources, savedResources)
 
         binding.lessonButton.setOnClickListener {
@@ -54,11 +49,17 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.materialButton.setOnClickListener {
-            materialPicker.launch("application/pdf")
+            startActivity(Intent(this, MaterialsActivity::class.java))
         }
 
+        binding.worksheetButton.setOnClickListener { openWorkspaceTool(WorkspaceToolActivity.MODE_WORKSHEET) }
+        binding.quizButton.setOnClickListener { openWorkspaceTool(WorkspaceToolActivity.MODE_QUIZ) }
+        binding.markingButton.setOnClickListener { openWorkspaceTool(WorkspaceToolActivity.MODE_MARKING) }
+        binding.recordsButton.setOnClickListener { startActivity(Intent(this, StudentRecordsActivity::class.java)) }
+        binding.assistantButton.setOnClickListener { startActivity(Intent(this, com.manuel.tai.ui.AssistantActivity::class.java)) }
+
         binding.settingsButton.setOnClickListener {
-            binding.statusText.text = getString(R.string.settings_summary)
+            startActivity(Intent(this, SettingsActivity::class.java))
         }
 
         binding.importModelButton.setOnClickListener {
@@ -73,15 +74,57 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        savedResources = LocalStore.materials(this).size
+        binding.resourceCountText.text = getString(R.string.saved_resources, savedResources)
         refreshModelStatus()
     }
 
+    private data class StatusStyle(
+        val label: String,
+        val dotColorRes: Int,
+        val pillColorRes: Int,
+        val textColorRes: Int
+    )
+
     private fun refreshModelStatus() {
-        binding.modelStatusText.text = if (ModelManager.isModelInstalled(this)) {
+        val installed = ModelManager.isModelInstalled(this)
+
+        binding.modelStatusText.text = if (installed) {
             getString(R.string.model_ready, ModelManager.modelSizeMb(this))
         } else {
             getString(R.string.model_not_loaded)
         }
+
+        val style = if (installed) {
+            StatusStyle(
+                label = getString(R.string.ai_status_ready),
+                dotColorRes = R.color.status_ready,
+                pillColorRes = R.color.status_ready_soft,
+                textColorRes = R.color.status_ready
+            )
+        } else {
+            StatusStyle(
+                label = getString(R.string.ai_status_template),
+                dotColorRes = R.color.status_template,
+                pillColorRes = R.color.status_template_soft,
+                textColorRes = R.color.status_template
+            )
+        }
+
+        binding.aiStatusBadge.text = style.label
+        binding.aiStatusBadge.setTextColor(ContextCompat.getColor(this, style.textColorRes))
+        DrawableCompat.setTint(
+            binding.aiStatusBadge.background.mutate(),
+            ContextCompat.getColor(this, style.pillColorRes)
+        )
+        DrawableCompat.setTint(
+            binding.aiStatusDot.background.mutate(),
+            ContextCompat.getColor(this, style.dotColorRes)
+        )
+    }
+
+    private fun openWorkspaceTool(mode: String) {
+        startActivity(Intent(this, WorkspaceToolActivity::class.java).putExtra(WorkspaceToolActivity.EXTRA_MODE, mode))
     }
 
     private fun importModel(uri: android.net.Uri) {

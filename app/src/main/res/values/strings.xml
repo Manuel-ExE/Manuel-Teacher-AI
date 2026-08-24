@@ -6,10 +6,43 @@
     <string name="material_imported">Imported locally: %1$s</string>
     <string name="material_saved">Material saved on this device</string>
     <string name="settings_summary">Battery saver is active. AI runs only when requested and stays on this device.</string>
+    <string name="status_default">Interface ready. No background AI process is running.</string>
+
+    <!-- Dashboard -->
+    <string name="teacher_workspace">Teacher workspace</string>
+    <string name="local_ai_model">Local AI model</string>
+    <string name="ai_engine_label">AI ENGINE</string>
+    <string name="ai_status_ready">Ready · local</string>
+    <string name="ai_status_template">Template mode</string>
+
+    <string name="tool_lesson_planner">Lesson Planner</string>
+    <string name="tool_lesson_planner_desc">Build a classroom-ready plan</string>
+    <string name="tool_question_generator">Question Generator</string>
+    <string name="tool_question_generator_desc">Exam-style question sets</string>
+    <string name="tool_materials">Teaching Materials</string>
+    <string name="tool_materials_desc">Import PDFs for this device</string>
+    <string name="tool_settings">Settings</string>
+    <string name="tool_settings_desc">Theme and privacy</string>
+
+    <!-- Emoji stand in for icons so no extra vector assets are needed -->
+    <string name="icon_lesson_planner">📘</string>
+    <string name="icon_question_generator">❓</string>
+    <string name="icon_materials">📂</string>
+    <string name="icon_settings">⚙️</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="theme_section_title">Appearance</string>
+    <string name="theme_section_subtitle">Choose how ManuelTAi looks on this device.</string>
+    <string name="theme_system">Match system</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="privacy_section_title">Privacy</string>
 
     <!-- Model management -->
     <string name="import_model">Import AI model (.task)</string>
-    <string name="model_not_loaded">No local AI model loaded yet. Tap \"Import AI model\" and select a .task model file (e.g. Gemma 3 1B) you\'ve downloaded.</string>
+    <string name="model_not_loaded">No local AI model loaded yet. Tap \"Import AI model\" and select a .task model file (e.g. Gemma 3 1B) you\'ve downloaded. Generate still works using basic offline templates until then.</string>
+    <string name="basic_draft_notice">Basic offline draft (no AI model imported). Import a .task model for full AI generation.</string>
     <string name="model_ready">Local model ready (%1$d MB). Runs fully offline.</string>
     <string name="model_loading">Loading local model…</string>
     <string name="model_load_failed">Could not load the model file: %1$s</string>
@@ -40,4 +73,27 @@
     <string name="label_question_type">Question type</string>
     <string name="include_answers">Include answers</string>
     <string name="include_explanations">Include explanations</string>
+
+    <!-- Extended teacher workspace -->
+    <string name="worksheet_creator_title">Worksheet Creator</string>
+    <string name="quiz_creator_title">Quiz Creator</string>
+    <string name="marking_assistant_title">Marking Assistant</string>
+    <string name="label_instructions">Instructions</string>
+    <string name="hint_instructions">e.g. Show your working and answer every question</string>
+    <string name="label_local_context">Local material query</string>
+    <string name="hint_local_context">Optional keywords from saved materials</string>
+    <string name="label_mark_scheme">Mark scheme / key points</string>
+    <string name="hint_mark_scheme">e.g. photosynthesis, sunlight, chlorophyll</string>
+    <string name="label_student_answer">Student answer</string>
+    <string name="hint_student_answer">Paste the learner response</string>
+    <string name="hint_question_type">Multiple Choice, Short Answer, or True/False</string>
+    <string name="result_saved">Result saved on this device</string>
+    <string name="marking_inputs_required">Enter the question and student answer first</string>
+    <string name="student_required">Enter a student name and class</string>
+    <string name="material_text_required">Enter or import some teaching text first</string>
+    <string name="assistant_prompt_required">Write a request first</string>
+    <string name="tool_assistant">AI Teacher Assistant</string>
+    <string name="tool_assistant_desc">Ask for local teaching help</string>
+    <string name="export_pdf">Export PDF</string>
+    <string name="material_import_error">Could not import material: %1$s</string>
 </resources>

@@ -6,7 +6,7 @@ MANUEL Teacher AI is an Android-only teaching workspace for teachers. It is desi
 
 The repository is a conventional Android Gradle project using Kotlin, XML layouts, view binding, AndroidX, Material Components, and an optional MediaPipe Tasks GenAI integration. The app package is `com.manuel.tai` and the app label is `ManuelTAi`.
 
-The current MVP includes a dashboard, lesson-planner form, question-generator form, PDF teaching-material selection, local saved-item storage, model import, model status, and adaptive launcher icons. Lesson and question generation use the local MediaPipe model only after a compatible `.task` model has been imported. Without a model, the app remains usable as a workspace but generation is disabled.
+The current workspace includes AI Teacher Assistant, Lesson Planner, Question Generator, Worksheet Creator, Quiz Creator, Marking Assistant, Student Records, and a Materials Library. Student records and saved materials are stored as small JSON documents in app-private SharedPreferences; no account, network, database server, or background worker is required. Materials can be pasted or imported as text or PDF, extracted locally, searched locally, and ranked by keyword overlap. The top matching excerpts are added to assistant, lesson, worksheet, and quiz prompts as transparent local context, providing a lightweight retrieval-augmented generation (RAG) path. Generated lessons, questions, worksheets, quizzes, and marking reports can be saved as text, shared, and exported as local PDFs through Android’s secure FileProvider. Lesson, question, assistant, worksheet, quiz, and marking generation use the local MediaPipe model once a compatible `.task` model has been imported. Without a model, every tool still works with deterministic offline drafts (`DraftGenerator`) so the app is useful immediately and upgrades in place once a model is imported.
 
 ## Structure
 
@@ -19,6 +19,9 @@ Manuel-Teacher-AI/
 │       ├── main/
 │       │   ├── AndroidManifest.xml
 │       │   ├── java/com/manuel/tai/
+│       │   │   ├── data/LocalStore.kt
+│       │   │   ├── export/PdfExporter.kt
+│       │   │   └── ui/AssistantActivity.kt, WorkspaceToolActivity.kt, StudentRecordsActivity.kt, MaterialsActivity.kt
 │       │   └── res/
 │       └── test/java/com/manuel/tai/
 ├── .github/workflows/android-apk.yml

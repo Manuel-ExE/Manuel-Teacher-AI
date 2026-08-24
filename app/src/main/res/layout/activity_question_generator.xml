@@ -5,17 +5,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?attr/android:colorBackground"
     android:orientation="vertical">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@android:color/white"
-        android:elevation="2dp"
+        android:elevation="0dp"
         android:title="@string/question_generator_title"
-        app:navigationIcon="@drawable/ic_back"
-        app:titleTextColor="#17223B" />
+        app:navigationIcon="@drawable/ic_back" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -34,7 +33,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:padding="10dp"
+                android:background="@drawable/bg_status_pill"
+                android:padding="12dp"
+                android:textColor="@color/text_secondary"
                 android:textSize="13sp"
                 tools:text="Local model not loaded. Import one from the main screen." />
 
@@ -50,25 +51,33 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-            <TextView style="@style/FieldLabel" android:text="@string/label_topic" />
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/topicInput"
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:drawable/edit_text"
-                android:hint="@string/hint_topic"
-                android:padding="12dp" />
+                android:layout_marginTop="14dp"
+                android:hint="@string/label_topic"
+                app:placeholderText="@string/hint_topic">
 
-            <TextView style="@style/FieldLabel" android:text="@string/label_question_count" />
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/countInput"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/topicInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:drawable/edit_text"
-                android:hint="@string/hint_question_count"
-                android:inputType="number"
-                android:padding="12dp"
-                android:text="10" />
+                android:layout_marginTop="14dp"
+                android:hint="@string/label_question_count"
+                app:placeholderText="@string/hint_question_count">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/countInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:text="10" />
+            </com.google.android.material.textfield.TextInputLayout>
 
             <TextView style="@style/FieldLabel" android:text="@string/label_question_type" />
             <Spinner
@@ -88,14 +97,16 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
                 android:checked="true"
-                android:text="@string/include_answers" />
+                android:text="@string/include_answers"
+                android:textColor="@color/text_primary" />
 
             <CheckBox
                 android:id="@+id/includeExplanationsCheck"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:checked="true"
-                android:text="@string/include_explanations" />
+                android:text="@string/include_explanations"
+                android:textColor="@color/text_primary" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/generateButton"
@@ -117,6 +128,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
+                android:textColor="@color/text_primary"
                 android:textIsSelectable="true"
                 android:textSize="14sp"
                 android:visibility="gone"
@@ -129,6 +141,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:nestedScrollingEnabled="false" />
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="12dp">
+                <com.google.android.material.button.MaterialButton android:id="@+id/saveQuestionsButton" style="@style/Widget.Material3.Button.TextButton" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/save" />
+                <com.google.android.material.button.MaterialButton android:id="@+id/exportQuestionsButton" style="@style/Widget.Material3.Button.TextButton" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/export_pdf" />
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>

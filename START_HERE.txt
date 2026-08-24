@@ -1,0 +1,25 @@
+MANUELTAI SPECIFICATION-ALIGNED CLEAN REPLACEMENT
+
+Included modules:
+- AI Teacher Assistant
+- Lesson Planner
+- Question Generator
+- Worksheet Creator with question count, student-name field, and answer-key option
+- Quiz Creator with multiple-choice, short-answer, and true/false modes
+- Marking Assistant with advisory key-point coverage and teacher-control warning
+- Student Records stored locally
+- Teaching Materials Library with text/PDF import and local text extraction
+- Keyword-ranked local retrieval context for assistant, lesson, worksheet, and quiz prompts
+- Local text save/share and Android PDF export
+- On-device MediaPipe Tasks GenAI model import and user-triggered inference
+
+Clean replacement:
+1. In GitHub Desktop choose Repository > Show in Explorer.
+2. Delete everything inside the repository folder, but keep the hidden .git folder.
+3. Extract this ZIP and open the ManuelTAi folder.
+4. Copy everything inside ManuelTAi directly into the repository folder.
+5. Refresh GitHub Desktop, commit, and push.
+
+The repository root must directly contain app, .github, gradle, build.gradle, settings.gradle, gradlew, and gradlew.bat.
+
+The sandbox validated XML parsing and Gradle configuration, but cannot perform a full Android compile because it has no Android SDK. GitHub Actions must perform the final API 34 compile, lint, tests, signing, and APK verification.

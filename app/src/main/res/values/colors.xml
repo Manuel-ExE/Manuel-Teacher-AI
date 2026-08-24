@@ -1,4 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Brand -->
+    <color name="brand_primary">#2457C5</color>
+    <color name="brand_primary_soft">#E8EEFC</color>
+    <color name="on_brand_primary">#FFFFFF</color>
+
+    <!-- Surfaces (white by default) -->
+    <color name="app_background">#FFFFFF</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="surface_alt">#F6F8FC</color>
+    <color name="stroke">#E3E8F2</color>
+
+    <!-- Text -->
+    <color name="text_primary">#17223B</color>
+    <color name="text_secondary">#5C6B84</color>
+
+    <!-- Status -->
+    <color name="status_ready">#1F9D63</color>
+    <color name="status_ready_soft">#E5F7EE</color>
+    <color name="status_template">#C97A1E</color>
+    <color name="status_template_soft">#FBF0E1</color>
+
+    <!-- Launcher icon (fixed regardless of theme) -->
     <color name="icon_background">#2457C5</color>
 </resources>
