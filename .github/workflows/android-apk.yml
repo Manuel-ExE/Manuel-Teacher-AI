@@ -40,8 +40,15 @@ jobs:
       - name: Make Gradle executable
         run: chmod +x ./gradlew
 
+      - name: Remove stale legacy files
+        run: |
+          rm -f app/build.gradle.kts
+          rm -f build.gradle.kts
+          rm -f settings.gradle.kts
+          rm -f app/src/main/res/values/styles.xml
+
       - name: Validate and build debug APK
-        run: ./gradlew --no-daemon lintDebug assembleDebug --stacktrace
+        run: ./gradlew --no-daemon clean lintDebug assembleDebug --stacktrace
 
       - name: Build release APK
         run: ./gradlew --no-daemon assembleRelease --stacktrace

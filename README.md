@@ -47,9 +47,9 @@ app/build/outputs/apk/debug/app-debug.apk
 
 ## Build with GitHub Actions
 
-The workflow at `.github/workflows/android-apk.yml` runs on pushes and pull requests to `main`, and can also be started manually from **Actions → Build Android APK → Run workflow**. It installs Android API 34 and runs `lintDebug`, `assembleDebug`, and `assembleRelease`.
+The workflow at `.github/workflows/android-apk.yml` runs on pushes and pull requests to `main`, and can also be started manually from **Actions → Build Android APK → Run workflow**. It installs Android API 34 and runs `clean`, `lintDebug`, `assembleDebug`, and `assembleRelease`. A preflight step removes stale Kotlin-DSL and duplicate legacy theme files, which prevents duplicate-resource failures when older copies of the project remain in the repository.
 
-The workflow uploads `ManuelTAi-debug-apk` and `ManuelTAi-release-apk-unsigned`. Use the debug artifact for direct phone testing. The release artifact is unsigned and is not intended for direct installation or Play Store distribution until a protected Android signing keystore is configured.
+The workflow uploads `ManuelTAi-debug-apk` and `ManuelTAi-release-apk-unsigned`. Use the debug artifact for direct phone testing. The release artifact is unsigned and is not intended for direct installation or Play Store distribution until a protected Android signing keystore is configured. When updating an existing checkout, replace the whole project folder or remove old files such as `app/src/main/res/values/styles.xml`; leaving both `styles.xml` and `themes.xml` with the same `Theme.ManuelTAi` declaration causes a resource merge error.
 
 ## Performance and privacy principles
 
