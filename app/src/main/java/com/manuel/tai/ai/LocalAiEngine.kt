@@ -35,7 +35,7 @@ object LocalAiEngine {
             val options = LlmInferenceOptions.builder()
                 .setModelPath(modelPath)
                 .setMaxTokens(1024)
-                .setTopK(40)
+                .setMaxTopK(40)
                 .setTemperature(0.7f)
                 .setRandomSeed(0)
                 .build()
