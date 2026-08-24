@@ -42,7 +42,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="AI READY · LOCAL MODE"
+                    android:text="@string/ai_status_label"
                     android:textColor="#2457C5"
                     android:textStyle="bold" />
 
@@ -51,7 +51,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="Interface ready. No background AI process is running."
+                    android:text="@string/ai_status_ready"
                     android:textSize="14sp" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -60,7 +60,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:text="Teacher workspace"
+            android:text="@string/workspace_title"
             android:textSize="21sp"
             android:textStyle="bold" />
 
@@ -69,7 +69,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:text="Lesson Planner" />
+            android:text="@string/lesson_planner" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/questionButton"
@@ -77,7 +77,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Question Generator" />
+            android:text="@string/question_generator" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/materialButton"
@@ -85,7 +85,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Teaching Materials" />
+            android:text="@string/teaching_materials" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/settingsButton"
@@ -93,14 +93,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Settings" />
+            android:text="@string/settings_battery_on" />
 
         <TextView
             android:id="@+id/resourceCountText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="Saved resources: 0"
+            android:text="@string/saved_resources"
             android:textStyle="bold" />
     </LinearLayout>
 </ScrollView>

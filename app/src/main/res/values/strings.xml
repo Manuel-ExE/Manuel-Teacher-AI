@@ -2,10 +2,28 @@
 <resources>
     <string name="app_name">ManuelTAi</string>
     <string name="app_tagline">Offline teaching workspace</string>
+    <string name="ai_status_label">PROTOTYPE MODE · LOCAL STORAGE</string>
+    <string name="ai_status_ready">Teacher workspace ready. AI engine is not installed yet.</string>
+    <string name="workspace_title">Teacher workspace</string>
+    <string name="lesson_planner">Lesson Planner</string>
+    <string name="question_generator">Question Generator</string>
+    <string name="teaching_materials">Teaching Materials</string>
+    <string name="settings_battery_on">Settings · Battery saver ON</string>
+    <string name="settings_battery_off">Settings · Battery saver OFF</string>
     <string name="saved_resources">Saved resources: %1$d</string>
     <string name="material_imported">Imported locally: %1$s</string>
-    <string name="material_saved">Material saved on this device</string>
-    <string name="lesson_draft_ready">Lesson draft ready for teacher review. Local model integration is next.</string>
-    <string name="question_draft_ready">Question draft ready for teacher review. Local model integration is next.</string>
-    <string name="settings_summary">Battery saver is active. AI runs only when requested and stays on this device.</string>
+    <string name="material_saved">Material reference saved on this device</string>
+    <string name="lesson_planner_title">Create lesson plan</string>
+    <string name="question_generator_title">Create question set</string>
+    <string name="generate_save">Generate and save</string>
+    <string name="subject_hint">Subject</string>
+    <string name="class_hint">Class or level</string>
+    <string name="topic_hint">Topic</string>
+    <string name="duration_hint">Duration</string>
+    <string name="question_count_hint">Number of questions</string>
+    <string name="lesson_saved">Lesson saved locally: %1$s</string>
+    <string name="questions_saved">Questions saved locally: %1$s</string>
+    <string name="settings_saved">Setting saved on this device</string>
+    <string name="battery_mode_on">Battery saver is ON. Generation runs only after you request it.</string>
+    <string name="battery_mode_off">Battery saver is OFF. No background process is running.</string>
 </resources>

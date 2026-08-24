@@ -11,12 +11,27 @@ android {
         applicationId "com.manuel.tai"
         minSdk 24
         targetSdk 34
-        versionCode 1
-        versionName "0.1.0"
+        versionCode 2
+        versionName "0.2.0"
+    }
+
+    signingConfigs {
+        ci {
+            def ciStoreFile = project.findProperty('ciStoreFile')
+            if (ciStoreFile) {
+                storeFile file(ciStoreFile)
+                storePassword project.findProperty('ciStorePassword')
+                keyAlias project.findProperty('ciKeyAlias')
+                keyPassword project.findProperty('ciKeyPassword')
+            }
+        }
     }
 
     buildTypes {
         release {
+            // CI supplies an ephemeral test keystore. Production must use protected secrets.
+            def ciStoreFile = project.findProperty('ciStoreFile')
+            if (ciStoreFile) signingConfig signingConfigs.ci
             minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -42,4 +57,5 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.11.0'
     implementation 'androidx.activity:activity-ktx:1.8.2'
+    testImplementation 'junit:junit:4.13.2'
 }
