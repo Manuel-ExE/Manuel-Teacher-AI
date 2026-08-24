@@ -1,22 +1,45 @@
 # ManuelTAi
 
-**MANUEL Teacher AI** is an Android-only, offline-first education assistant for teachers. The app is designed for low-end devices, small installation size, low memory usage, and minimal battery consumption.
+**MANUEL Teacher AI** is an Android-only, offline-first teaching workspace for teachers. The project is intentionally structured as a conventional Android Gradle project so it can be built reliably by Android Studio, GitHub Actions, or the included Gradle wrapper.
 
-## Current Android foundation
+## Project structure
 
-The repository contains a lightweight native Android application written in Kotlin with Jetpack Compose. The initial screen provides the ManuelTAi teacher workspace and establishes the package name `com.manuel.tai`.
+```text
+Manuel-Teacher-AI/
+├── app/
+│   ├── build.gradle
+│   ├── proguard-rules.pro
+│   └── src/main/
+│       ├── AndroidManifest.xml
+│       ├── java/com/manuel/tai/MainActivity.kt
+│       └── res/
+│           ├── drawable/ic_launcher.xml
+│           ├── layout/activity_main.xml
+│           └── values/
+├── .github/workflows/android-apk.yml
+├── build.gradle
+├── gradle.properties
+├── gradlew
+├── gradle/wrapper/
+└── settings.gradle
+```
 
-The current MVP includes an Android dashboard, lesson planner form, question generator, teaching-materials PDF picker, local resource counters, offline status, model-tier selection, and battery-saver messaging. The local-AI engine is kept separate and will be connected as an Android-compatible module. It should run only when the teacher requests generation, remain stopped otherwise, and use a device-appropriate quantized model. The current lesson and question outputs are local demo drafts that will be replaced by the model runtime.
+The app uses Kotlin, Android Gradle Plugin 8.2.2, Java 17, view binding, Android XML resources, and a small set of AndroidX and Material dependencies. The package name is `com.manuel.tai`, and the Android label is `ManuelTAi`.
+
+## Current MVP
+
+The current screen provides the ManuelTAi dashboard, offline/local-mode status, Lesson Planner, Question Generator, Teaching Materials PDF picker, local resource counting, and battery-saver messaging. Lesson and question results are currently local demo drafts; the on-device Gemma/Qwen model runtime will be connected as a separate next step.
 
 ## Build locally
 
-Install JDK 17 and the Android SDK, then run:
+Install JDK 17 and the Android SDK platform and build tools for API 34. From the repository root, run:
 
 ```bash
-./gradlew assembleDebug
+chmod +x gradlew
+./gradlew --no-daemon clean lintDebug assembleDebug
 ```
 
-The debug APK is generated at:
+The installable testing APK is generated at:
 
 ```text
 app/build/outputs/apk/debug/app-debug.apk
@@ -24,12 +47,10 @@ app/build/outputs/apk/debug/app-debug.apk
 
 ## Build with GitHub Actions
 
-The workflow at `.github/workflows/android-apk.yml` runs on pushes and pull requests to `main`, as well as from the GitHub Actions **Run workflow** button. It builds both a debug APK and an unsigned release APK.
+The workflow at `.github/workflows/android-apk.yml` runs on pushes and pull requests to `main`, and can also be started manually from **Actions → Build Android APK → Run workflow**. It installs Android API 34 and runs `lintDebug`, `assembleDebug`, and `assembleRelease`.
 
-To download an APK, open the completed workflow run on GitHub and download either the `ManuelTAi-debug-apk` or `ManuelTAi-release-apk-unsigned` artifact.
+The workflow uploads `ManuelTAi-debug-apk` and `ManuelTAi-release-apk-unsigned`. Use the debug artifact for direct phone testing. The release artifact is unsigned and is not intended for direct installation or Play Store distribution until a protected Android signing keystore is configured.
 
-The unsigned release APK is suitable for build verification but is not ready for Play Store distribution. Production distribution will require an Android signing keystore stored as protected GitHub Actions secrets.
+## Performance and privacy principles
 
-## Battery and performance principles
-
-The app will avoid background AI inference, continuous polling, unnecessary location services, automatic video or animation, and persistent network connections. AI generation will be user-triggered and executed only while the relevant screen is active. Local files and small SQLite-style data will be preferred over repeated network requests.
+ManuelTAi does not run continuous AI inference, background polling, location services, or a permanent network connection. AI generation will be user-triggered, local document storage will be preferred, and the eventual model manager will choose a smaller quantized model on low-memory Android devices. Internet access will remain optional for updates, model downloads, backups, or explicitly enabled synchronization.

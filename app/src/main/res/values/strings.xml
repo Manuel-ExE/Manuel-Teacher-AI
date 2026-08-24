@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ManuelTAi</string>
+    <string name="app_tagline">Offline teaching workspace</string>
+    <string name="saved_resources">Saved resources: %1$d</string>
+    <string name="material_imported">Imported locally: %1$s</string>
+    <string name="material_saved">Material saved on this device</string>
+    <string name="lesson_draft_ready">Lesson draft ready for teacher review. Local model integration is next.</string>
+    <string name="question_draft_ready">Question draft ready for teacher review. Local model integration is next.</string>
+    <string name="settings_summary">Battery saver is active. AI runs only when requested and stays on this device.</string>
+</resources>

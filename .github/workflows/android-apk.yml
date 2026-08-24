@@ -35,16 +35,16 @@ jobs:
       - name: Install Android SDK platform and build tools
         run: |
           yes | sdkmanager --licenses > /dev/null || true
-          sdkmanager "platforms;android-35" "build-tools;35.0.0"
+          sdkmanager "platforms;android-34" "build-tools;34.0.0"
 
       - name: Make Gradle executable
         run: chmod +x ./gradlew
 
-      - name: Build debug APK
-        run: ./gradlew assembleDebug --stacktrace
+      - name: Validate and build debug APK
+        run: ./gradlew --no-daemon lintDebug assembleDebug --stacktrace
 
       - name: Build release APK
-        run: ./gradlew assembleRelease --stacktrace
+        run: ./gradlew --no-daemon assembleRelease --stacktrace
 
       - name: Upload debug APK
         uses: actions/upload-artifact@v4
