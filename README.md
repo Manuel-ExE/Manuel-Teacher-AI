@@ -24,7 +24,7 @@ Manuel-Teacher-AI/
 └── settings.gradle
 ```
 
-The app uses Kotlin, Android Gradle Plugin 8.2.2, Java 17, view binding, Android XML resources, and a small set of AndroidX and Material dependencies. The package name is `com.manuel.tai`, and the Android label is `ManuelTAi`.
+The app uses Kotlin 1.9.22, Android Gradle Plugin 8.7.3, Gradle 8.10.2, Java 17, view binding, Android XML resources, and a small set of AndroidX and Material dependencies. The package name is `com.manuel.tai`, and the Android label is `ManuelTAi`.
 
 ## Current MVP
 
@@ -32,7 +32,7 @@ The current screen provides the ManuelTAi dashboard, offline/local-mode status, 
 
 ## Build locally
 
-Install JDK 17 and the Android SDK platform and build tools for API 34. From the repository root, run:
+Install JDK 17 and the Android SDK platform and build tools for API 34. The included wrapper downloads Gradle 8.10.2 from the standard Gradle distribution service. From the repository root, run:
 
 ```bash
 chmod +x gradlew
